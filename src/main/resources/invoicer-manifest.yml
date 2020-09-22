@@ -1,0 +1,8 @@
+---
+applications:
+  - name: invoicer
+    instance: 1
+    buildpacks:
+      - java_buildpack
+    env:
+      JBP_CONFIG_OPEN_JDK_JRE: '{ "jre": { version: 14.+ } }'

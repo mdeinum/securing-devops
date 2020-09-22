@@ -1,0 +1,55 @@
+version: 2.1
+# These environment variables must be set in CircleCI UI
+#
+# DOCKER_EMAIL   - login info for docker hub
+# DOCKER_USER
+# DOCKER_PASS
+#
+orbs:
+  cloudfoundry: circleci/cloudfoundry@0.1.73
+jobs:
+  build:
+    docker:
+      - image: cimg/openjdk:14.0
+    working_directory: ~/securing-devops
+    steps:
+      - checkout
+      - restore_cache:
+          key: securing-devops-boot-{{ checksum "pom.xml" }}
+      - run: mvn dependency:go-offline
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: securing-devops-boot-{{ checksum "pom.xml" }}
+      - run: mvn -o clean verify
+      - store_test_results:
+          path: ~/junit
+      - store_artifacts: 
+          path: target/invoicer-0.0.1-SNAPSHOT.jar
+      - store_artifacts:
+          path: src/main/resources/invoicer-manifest.yml
+      - run:
+          name: Copy deployment artifacts to workspace
+          command: |
+            cp target/invoicer-*.jar /tmp/invoicer.jar
+            cp src/main/resources/invoicer-manifest.yml /tmp/
+      - persist_to_workspace:
+          root: /tmp
+          paths:
+            - invoicer.jar
+            - invoicer-manifest.yml
+
+workflows:
+  version: 2
+  default:
+    jobs:
+      - build
+      - cloudfoundry/push:
+          requires: 
+            - build
+          workspace_path: /tmp
+          appname: invoicer
+          org: Conspect
+          space: development
+          manifest: /tmp/invoicer-manifest.yml
+          package: /tmp/invoicer.jar

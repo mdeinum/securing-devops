@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Invoicer WebUI</title>
+    <script src="../static/jquery-1.12.4.min.js" th:src="@{/jquery-1.12.4.min.js}"></script>
+    <link href="../static/style.css" th:href="@{/style.css}" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<p class="desc-invoice"></p>
+<div class="invoice-details">
+</div>
+<form id="invoiceGetter" method="GET">
+    <h3>Request an invoice by ID</h3>
+    <label>ID :</label>
+    <input id="invoiceid" type="text" />
+    <input type="submit" />
+</form>
+
+<script src="../static/invoicer-cli.js" th:src="@{/invoicer-cli.js}"></script>
+</body>
+</html>
