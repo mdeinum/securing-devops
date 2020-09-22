@@ -16,7 +16,7 @@ jobs:
       - checkout
       - restore_cache:
           key: securing-devops-boot-{{ checksum "pom.xml" }}
-      - run: mvn dependency:go-offline
+      - run: ./mvnw dependency:go-offline
       - save_cache:
           paths:
             - ~/.m2
@@ -39,6 +39,16 @@ jobs:
             - invoicer.jar
             - invoicer-manifest.yml
 
+  spot_bugs:
+    docker:
+      - image: cimg/openjdk:14.0
+    steps:
+      - checkout
+      - restore_cache:
+          key: securing-devops-boot-{{ checksum "pom.xml" }}
+
+      - run: mvn -o verify spotbugs:check -DskipTests
+
 workflows:
   version: 2
   default:
@@ -53,3 +63,6 @@ workflows:
           space: development
           manifest: /tmp/invoicer-manifest.yml
           package: /tmp/invoicer.jar
+      - spot_bugs:
+          requires:
+            - build
