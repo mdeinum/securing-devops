@@ -16,12 +16,12 @@ jobs:
       - checkout
       - restore_cache:
           key: securing-devops-boot-{{ checksum "pom.xml" }}
-      - run: mvn dependency:go-offline
+      - run: ./mvnw dependency:resolve dependency:go-offline
       - save_cache:
           paths:
             - ~/.m2
           key: securing-devops-boot-{{ checksum "pom.xml" }}
-      - run: mvn -o clean verify
+      - run: ./mvnw -o clean verify
       - store_test_results:
           path: ~/junit
       - store_artifacts: 
@@ -47,7 +47,7 @@ jobs:
       - restore_cache:
           key: securing-devops-boot-{{ checksum "pom.xml" }}
 
-      - run: mvn -o verify spotbugs:check -DskipTests
+      - run: ./mvnw -o verify spotbugs:check -DskipTests
 
   dependency_check:
     docker:
@@ -57,7 +57,7 @@ jobs:
       - restore_cache:
           key: securing-devops-boot-{{ checksum "pom.xml" }}
 
-      - run: mvn dependency-check:check
+      - run: ./mvnw dependency-check:check
 
 workflows:
   version: 2

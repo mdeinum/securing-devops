@@ -8,8 +8,17 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
+    <inceptionYear>2019</inceptionYear>
     <name>invoicer</name>
     <description>Securing DevOps: Java Implementation</description>
+
+    <developers>
+        <developer>
+            <name>Marten Deinum</name>
+            <email>marten.deinum@conspect.nl</email>
+            <organization>Conspect Consulting &amp; ICT</organization>
+        </developer>
+    </developers>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -24,7 +33,6 @@
         <java.version>14</java.version>
 
         <docker.image.prefix>mdeinum</docker.image.prefix>
-
     </properties>
 
     <dependencies>
