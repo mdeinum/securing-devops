@@ -13,30 +13,39 @@ function getQueryParams(qs) {
 }
 var $_GET = getQueryParams(document.location.search);
 
-var api_endpoint = "http://localhost:8080/invoice/";
+const api_endpoint = "http://localhost:8080/invoice/";
 
-$(document).ready(function() {
-	var invoiceid = $_GET['invoiceid'];
-	if (invoiceid == undefined) {
-		invoiceid = "1";
-	}
-    $('.desc-invoice').replaceWith("Showing invoice ID " + invoiceid);
-    $.ajax({
-        url: api_endpoint + invoiceid
-    }).then(function(invoice) {
-		$('.invoice-details').replaceWith("<p>Invoice ID " + invoice.ID + " has amount $" + invoice.amount + "</p>");
-    });
+document.addEventListener('DOMContentLoaded', function() {
+    var invoiceid = $_GET['invoiceid'];
+    if (invoiceid !== undefined) {
+        retrieveAndShowInvoice(invoiceid)
+    }
+
+    document.querySelector("#invoiceGetter")
+        .addEventListener('submit', function(evt) {
+            evt.preventDefault();
+            const invoiceid = document.querySelector('#invoiceid').value
+            retrieveAndShowInvoice(invoiceid)
+
+        })
 });
 
-$(document).ready(function() {
-    $("form#invoiceGetter").submit(function(event) {
-        event.preventDefault();
-    	$('.desc-invoice').replaceWith("Showing invoice ID " + $("#invoiceid").val());
-        $.ajax({
-            type: "GET",
-            url: api_endpoint + $("#invoiceid").val(),
-        }).then(function(invoice) {
-	 	   $('.invoice-details').replaceWith("<p>Invoice ID " + invoice.ID + " has amount $" + invoice.amount + "</p>");
-    	});
-	});
-});
+function retrieveAndShowInvoice(invoiceid) {
+    const url= api_endpoint + invoiceid
+    const description = document.querySelector('.desc-invoice')
+    description.innerHTML = 'Showing invoice ID '+ invoiceid
+
+    fetch(url)
+        .then(function(response) {
+            return response.json()
+        })
+        .then(function(invoice){
+            var details = document.querySelector('.invoice-details');
+            if (invoice.status !== undefined) {
+                details.innerHTML = '<p><strong>No Invoice Found!</strong></p>'
+            } else {
+                details.innerHTML = '<p>Invoice ID ' + invoice.id + ' has amount $' + invoice.amount + '</p>'
+            }
+        });
+
+}

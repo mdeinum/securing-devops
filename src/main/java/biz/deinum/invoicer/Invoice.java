@@ -9,6 +9,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
@@ -21,7 +22,7 @@ public class Invoice extends AbstractPersistable<Long> {
     private LocalDate paymentDate;
     private LocalDate dueDate;
 
-    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<Charge> charges = new HashSet<>();
 
     public boolean isPaid() {

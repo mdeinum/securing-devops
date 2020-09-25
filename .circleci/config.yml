@@ -16,7 +16,7 @@ jobs:
       - checkout
       - restore_cache:
           key: securing-devops-boot-{{ checksum "pom.xml" }}
-      - run: ./mvnw dependency:go-offline
+      - run: mvn dependency:go-offline
       - save_cache:
           paths:
             - ~/.m2
