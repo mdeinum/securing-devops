@@ -59,6 +59,28 @@ jobs:
 
       - run: ./mvnw dependency-check:check
 
+  zap_baseline_scan:
+    docker:
+      - image: cimg/openjdk:14.0
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 19.03.12
+      - run: |
+          # Create container holding the configuration
+          docker create -v /zap/wrk --name zapwrk alpine:3.4 /bin/true
+          # Copy zap-baseline.conf to volumne
+          docker cp ./zap-baseline.conf zapwrk:/zap/wrk
+      - run:
+          command: |
+            (
+              docker pull owasp/zap2docker-weekly && \
+              docker run \
+                --volumes-from zapwrk \
+                -t owasp/zap2docker-weekly zap-baseline.py -d -c zap-baseline.conf -t https://invoicer.cfapps.io || \
+              if [ $? -ne 1 ]; then exit 0; else exit 1; fi;
+            )
+
 workflows:
   version: 2
   default:
@@ -79,3 +101,6 @@ workflows:
       - spot_bugs:
           requires:
             - build
+      - zap_baseline_scan:
+          requires:
+            - cloudfoundry/push
