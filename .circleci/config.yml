@@ -82,7 +82,7 @@ jobs:
             )
   tlsobs:
     docker:
-      - image: cimg/go:1.14
+      - image: circleci/golang
     steps:
       - run: |
           go get github.com/mozilla/tls-observatory/tlsobs
