@@ -80,6 +80,13 @@ jobs:
                 -t owasp/zap2docker-weekly zap-baseline.py -d -c zap-baseline.conf -t https://invoicer.cfapps.io || \
               if [ $? -ne 1 ]; then exit 0; else exit 1; fi;
             )
+  tlsobs:
+    docker:
+      - image: cimg/go:1.15
+    steps:
+      - run: |
+          go get github.com/mozilla/tls-observatory/tlsobs
+          tlsobs invoicer.cfapps.io
 
 workflows:
   version: 2
@@ -102,5 +109,8 @@ workflows:
           requires:
             - build
       - zap_baseline_scan:
+          requires:
+            - cloudfoundry/push
+      - tlsobs:
           requires:
             - cloudfoundry/push
